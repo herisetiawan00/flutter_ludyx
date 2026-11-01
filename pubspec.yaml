@@ -1,0 +1,22 @@
+name: flutter_ludyx
+description: "Flutter adapter for Ludyx Server"
+version: 0.0.1
+homepage: "https://herisetiawan.id"
+repository: "https://github.com/herisetiawan00/flutter_ludyx"
+
+environment:
+  sdk: ^3.13.7
+  flutter: ">=1.17.0"
+
+dependencies:
+  archive: ^4.5.2
+  cryptography: ^2.9.0
+  flutter:
+    sdk: flutter
+  http: ^1.6.0
+  lua_dardo_plus: ^0.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
