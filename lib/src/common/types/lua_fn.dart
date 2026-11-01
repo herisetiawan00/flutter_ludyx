@@ -1,11 +1,11 @@
 import 'package:flutter_ludyx/src/common/extensions/lua_extension.dart';
 import 'package:lua_dardo_plus/lua.dart';
 
-class LuaFn(final LuaState state, final int refId) {
-  factory LuaFn.fromState(LuaState state, int absIndex) {
+class LudyxFn(final LuaState state, final int refId) {
+  factory LudyxFn.fromState(LuaState state, int absIndex) {
     state.pushValue(absIndex);
     final int refId = state.ref(luaRegistryIndex);
-    return LuaFn(state, refId);
+    return LudyxFn(state, refId);
   }
 
   bool _disposed = false;

@@ -28,7 +28,7 @@ extension LuaStateExtension on LuaState {
         isInteger(absIndex) ? toInteger(absIndex) : toNumber(absIndex),
       .luaString => toStr(absIndex),
       .luaTable => _tableToDart(absIndex),
-      .luaFunction => LuaFn.fromState(this, absIndex),
+      .luaFunction => LudyxFn.fromState(this, absIndex),
       _ => null,
     };
   }

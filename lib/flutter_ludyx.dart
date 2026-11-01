@@ -6,6 +6,7 @@ import 'package:lua_dardo_plus/lua.dart';
 export 'package:flutter_ludyx/ludyx_bundle_manager.dart';
 export 'package:flutter_ludyx/ludyx_bundle_config.dart';
 export 'package:flutter_ludyx/src/helper/ludyx_helper.dart';
+export 'package:flutter_ludyx/src/common/types/lua_fn.dart';
 
 
 class FlutterLudyx {
