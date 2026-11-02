@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:archive/archive.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_ludyx/ludyx_bundle_config.dart';
-import 'package:lua_dardo_plus/lua.dart';
 
 class LudyxBundleManager {
   static final Map<String, String> _loadedScripts = {};
@@ -14,15 +14,39 @@ class LudyxBundleManager {
   static Map<String, String> get loadedScripts => _loadedScripts;
   static String? get activeVersion => _activeVersion;
 
-  static Future<bool> syncAndLoad({
-    required LudyxBundleConfig config,
-    String channel = 'production',
+  static Future<bool> syncFromAsset({
+    required LudyxBundleAssetConfig config,
+  }) async {
+    final AssetManifest assetManifest = await AssetManifest.loadFromAssetBundle(
+      rootBundle,
+    );
+
+    final List<String> luaFiles = assetManifest
+        .listAssets()
+        .where(
+          (path) => path.startsWith(config.bundlePath) && path.endsWith('.lua'),
+        )
+        .toList();
+
+    await Future.wait(
+      luaFiles.map((path) async {
+        String cleanPath = path.replaceFirst(config.bundlePath, '');
+        if (cleanPath.startsWith('/')) {
+          cleanPath = cleanPath.replaceFirst('/', '');
+        }
+        _loadedScripts[cleanPath] = await rootBundle.loadString(path);
+      }),
+    );
+
+    return true;
+  }
+
+  static Future<bool> syncFromRemote({
+    required LudyxBundleRemoteConfig config,
   }) async {
     try {
       // 1. Fetch manifest
-      final manifestUri = Uri.parse(
-        '${config.baseUrl}/manifest.json?channel=$channel',
-      );
+      final manifestUri = Uri.parse('${config.baseUrl}/manifest.json');
       final manifestRes = await http.get(manifestUri);
 
       if (manifestRes.statusCode != 200) {
@@ -112,37 +136,11 @@ class LudyxBundleManager {
     }
   }
 
-  void setupLuaModuleSearcher(LuaState ls) {
-    ls.getGlobal('package');
-    ls.getField(-1, 'searchers');
-    final int searchersTableIndex = ls.getTop();
-
-    // Push custom searcher function
-    ls.pushDartFunction((LuaState state) {
-      final String moduleName = state.toStr(1)!;
-      final String pathKey = '${moduleName.replaceAll('.', '/')}.lua';
-
-      // 1. Check in-memory bundle first
-      final memoryCode = LudyxBundleManager.loadedScripts[pathKey];
-      if (memoryCode != null) {
-        state.loadString(memoryCode);
-        return 1; // Pushes loaded chunk
-      }
-
-      // 2. Return lookup failure message for standard package loader chain
-      state.pushString("\n\tno dynamic bundle file '$pathKey'");
-      return 1;
-    });
-
-    // Prepend searcher at index 2 (just after package.preload)
-    final int len = ls.rawLen(searchersTableIndex);
-    for (int i = len; i >= 2; i--) {
-      ls.rawGetI(searchersTableIndex, i);
-      ls.rawSetI(searchersTableIndex, i + 1);
-    }
-    ls.rawSetI(searchersTableIndex, 2);
-
-    ls.pop(2); // Pop 'package' and 'searchers'
+  static Future<bool> syncAndLoad({required LudyxBundleConfig config}) async {
+    return switch (config) {
+      LudyxBundleRemoteConfig() => syncFromRemote(config: config),
+      LudyxBundleAssetConfig() => syncFromAsset(config: config),
+    };
   }
 
   static String? load(String module) {
