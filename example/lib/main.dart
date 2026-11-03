@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_ludyx/flutter_ludyx.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = .new();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  BasicComponents.register();
   final LudyxBundleAssetConfig ludyxConfig = .new(bundlePath: 'assets/lua');
   await LudyxBundleManager.syncAndLoad(config: ludyxConfig);
 
@@ -18,135 +20,61 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Ludyx Demo',
       theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: const MyWidget(),
+      navigatorKey: navigatorKey,
+      routes: {
+        '/home': (_) => BaseScreen(routeName: '/home'),
+        '/detail': (_) => BaseScreen(routeName: '/detail'),
+      },
+      initialRoute: '/home',
     );
   }
 }
 
-class MyWidget extends StatefulWidget {
-  const new({super.key});
-
+class const BaseScreen({super.key, required final String routeName})
+    extends StatefulWidget {
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  State<BaseScreen> createState() => _BaseScreenState();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _BaseScreenState extends State<BaseScreen> {
   late final FlutterLudyx ludyx;
-  late final ValueNotifier<num> number;
-
-  late final TextEditingController aController, bController;
+  late final ValueNotifier<Map<String, dynamic>> component;
 
   @override
   void initState() {
     super.initState();
-    number = .new(0);
+    component = .new({});
     ludyx = .new();
 
-    LudyxHelper(ludyx).withModuleSearcher().withLogger().setup();
+    _setupHelpers();
     ludyx.loadMain();
+    _rebuild();
+  }
 
-    aController = .new(text: '0');
-    bController = .new(text: '0');
+  void _setupHelpers() {
+    LudyxHelper(ludyx)
+        .withModuleSearcher()
+        .withLogger()
+        .withNavigatorHelper(navigatorKey)
+        .withFlutterHelper(_rebuild)
+        .setup();
+  }
+
+  void _rebuild() {
+    component.value = ludyx.callFn('GetView', [widget.routeName]) ?? {};
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ValueListenableBuilder<num>(
-          valueListenable: number,
-          builder: (context, value, child) {
-            return Padding(
-              padding: const .all(32),
-              child: Column(
-                mainAxisSize: .min,
-                spacing: 16,
-                children: [
-                  Row(
-                    spacing: 16,
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: aController,
-                          keyboardType: .number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          textAlign: .center,
-                        ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: bController,
-                          keyboardType: .number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          textAlign: .center,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    spacing: 16,
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            number.value = ludyx.callFn('Plus', <double>[
-                              .parse(aController.text),
-                              .parse(bController.text),
-                            ]);
-                          },
-                          child: Text('+'),
-                        ),
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            number.value = ludyx.callFn('Minus', <double>[
-                              .parse(aController.text),
-                              .parse(bController.text),
-                            ]);
-                          },
-                          child: Text('-'),
-                        ),
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            number.value = ludyx.callFn('Multiply', <double>[
-                              .parse(aController.text),
-                              .parse(bController.text),
-                            ]);
-                          },
-                          child: Text('*'),
-                        ),
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            number.value = ludyx.callFn('Divide', <double>[
-                              .parse(aController.text),
-                              .parse(bController.text),
-                            ]);
-                          },
-                          child: Text('/'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  ?child,
-                  Text(
-                    value.toStringAsFixed(2),
-                    style: .new(fontSize: 24, fontWeight: .w600),
-                  ),
-                ],
-              ),
-            );
-          },
-          child: Text('here is the result:'),
-        ),
+      body: ValueListenableBuilder<Map<String, dynamic>>(
+        valueListenable: component,
+        builder: (context, value, child) {
+          if (value.isEmpty) {
+            return SizedBox.shrink();
+          }
+          return SizedBox(width: .infinity, child: Components.build(value));
+        },
       ),
     );
   }

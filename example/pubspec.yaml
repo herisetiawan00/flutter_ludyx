@@ -20,4 +20,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/lua/
-    - assets/lua/calculate/
+    - assets/lua/components/
+    - assets/lua/view/
