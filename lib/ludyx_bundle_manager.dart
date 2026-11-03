@@ -7,14 +7,15 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_ludyx/ludyx_bundle_config.dart';
 
+/// `LudyxBundleManager` help to manage active scripts
 class LudyxBundleManager {
   static final Map<String, String> _loadedScripts = {};
   static String? _activeVersion;
 
-  static Map<String, String> get loadedScripts => _loadedScripts;
-  static String? get activeVersion => _activeVersion;
+  /// any scripts loaded will be stored on `loadedScripts`
+  static Map<String, String> get loadedScripts => Map.unmodifiable(_loadedScripts);
 
-  static Future<bool> syncFromAsset({
+  static Future<bool> _syncFromAsset({
     required LudyxBundleAssetConfig config,
   }) async {
     final AssetManifest assetManifest = await AssetManifest.loadFromAssetBundle(
@@ -41,7 +42,7 @@ class LudyxBundleManager {
     return true;
   }
 
-  static Future<bool> syncFromRemote({
+  static Future<bool> _syncFromRemote({
     required LudyxBundleRemoteConfig config,
   }) async {
     try {
@@ -136,13 +137,15 @@ class LudyxBundleManager {
     }
   }
 
+  /// load scripts from given `LudyxBundleConfig`
   static Future<bool> syncAndLoad({required LudyxBundleConfig config}) async {
     return switch (config) {
-      LudyxBundleRemoteConfig() => syncFromRemote(config: config),
-      LudyxBundleAssetConfig() => syncFromAsset(config: config),
+      LudyxBundleRemoteConfig() => _syncFromRemote(config: config),
+      LudyxBundleAssetConfig() => _syncFromAsset(config: config),
     };
   }
 
+  /// used internally to resolve `require` import inside the script
   static String? load(String module) {
     final rpath = module.replaceAll('.', '/');
     String path = '$rpath.lua';
@@ -153,7 +156,8 @@ class LudyxBundleManager {
     return loadedScripts[path];
   }
 
-  static String loadMain([String? path]) {
-    return _loadedScripts[path ?? 'main.lua']!;
+  /// used internally to load main entrypoint of the script
+  static String loadMain(String path) {
+    return _loadedScripts[path]!;
   }
 }

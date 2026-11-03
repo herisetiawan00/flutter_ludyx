@@ -1,22 +1,15 @@
 import 'package:flutter_ludyx/src/common/types/lua_fn.dart';
 import 'package:lua_dardo_plus/lua.dart';
 
+/// Custom reusable extension on LuaState
 extension LuaStateExtension on LuaState {
-  T nestedFields<T>(String path, T Function(LuaState ls) action) {
-    final chunks = path.split('.');
-    for (final chunk in chunks) {
-      getField(-1, chunk);
-    }
-    final result = action(this);
-    pop(chunks.length);
-    return result;
-  }
-
+  /// get absolute index of given [idx]
   int toAbsIndex(int idx) {
     if (idx > 0) return idx;
     return getTop() + idx + 1;
   }
 
+  /// Convert received data from script to dart-typed
   dynamic toDart([int stackIndex = -1]) {
     final int absIndex = toAbsIndex(stackIndex);
 

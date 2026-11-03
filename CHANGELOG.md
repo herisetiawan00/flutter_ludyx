@@ -15,3 +15,8 @@
 * add `ludyx_navigator_helper.dart` to help handle navigation between screen
 * add `ludyx_flutter_helper.dart` with `onRebuild` for rebuilding on value changed
 * update `example` with new UI
+
+## 0.0.5
+
+* Update package description
+* Add dangerous library handler to limit script capability

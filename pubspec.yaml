@@ -1,5 +1,5 @@
 name: flutter_ludyx
-description: "Flutter adapter for Ludyx Server"
+description: "Flutter Ludyx is an Ludyx server adapter for flutter enabling lightweight mobile with backend-controlled logic"
 version: 0.0.4
 homepage: "https://herisetiawan.id"
 repository: "https://github.com/herisetiawan00/flutter_ludyx"

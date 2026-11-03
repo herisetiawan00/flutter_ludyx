@@ -1,7 +1,10 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter_ludyx/src/helper/base_ludyx_helper.dart';
 import 'package:flutter_ludyx/ludyx_bundle_manager.dart';
 import 'package:lua_dardo_plus/lua.dart';
 
+/// Help to handle module import inside the script
 class LudyxModuleSearcherHelper(super.ludyx) extends BaseLudyxHelper {
   @override
   void setup() {

@@ -1,7 +1,10 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_ludyx/src/helper/base_ludyx_helper.dart';
 import 'package:lua_dardo_plus/lua.dart';
 
+/// Help to handle flutter helper inside the script
 class LudyxFlutterHelper(
   super.ludyx, {
   required final VoidCallback onRebuild,
