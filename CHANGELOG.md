@@ -20,3 +20,8 @@
 
 * Update package description
 * Add dangerous library handler to limit script capability
+
+## 0.0.6
+
+* Support `flutter_ludyx_generator` and `flutter_ludyx_annotations`
+* Removed basic component
