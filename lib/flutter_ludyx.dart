@@ -10,7 +10,6 @@ export 'package:flutter_ludyx/src/helper/ludyx_helper.dart';
 export 'package:flutter_ludyx/src/common/types/lua_fn.dart';
 
 export 'package:flutter_ludyx/src/components/components.dart';
-export 'package:flutter_ludyx/src/components/basic_components.dart';
 
 /// This is `FlutterLudyx` instance that maintaining current running script
 class FlutterLudyx {

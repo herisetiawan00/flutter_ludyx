@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:ludyx_example/components.dart' as ludyx_components;
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_ludyx/flutter_ludyx.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = .new();
@@ -6,7 +7,8 @@ final GlobalKey<NavigatorState> navigatorKey = .new();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  BasicComponents.register();
+  ludyx_components.init();
+
   final LudyxBundleAssetConfig ludyxConfig = .new(bundlePath: 'assets/lua');
   await LudyxBundleManager.syncAndLoad(config: ludyxConfig);
 

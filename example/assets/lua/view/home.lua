@@ -1,45 +1,45 @@
-local UI = require("components.basic");
+local UI = require("components");
 
 local value = 0
 
 local function HomeView()
-  return UI.Multi({
+  return UI.MultiWidget({
     direction = "vertical",
     crossAlignment = "center",
     alignment = "center",
     spacing = 16,
     children = {
-      UI.Text({
+      UI.TextWidget({
         value = "Home Screen",
         style = {
           fontSize = 24,
           fontWeight = 600
         }
       }),
-      UI.Clickable({
+      UI.ClickableWidget({
         onClick = function()
           Navigator.pushNamed("/detail")
         end,
-        child = UI.Text({
+        child = UI.TextWidget({
           value = "Open Detail"
         }),
       }),
-      UI.Text({
+      UI.TextWidget({
         value = "set the counter below",
       }),
-      UI.Text({
+      UI.TextWidget({
         value = tostring(value),
         style = {
           fontSize = 28,
           fontWeight = 800
         }
       }),
-      UI.Clickable({
+      UI.ClickableWidget({
         onClick = function()
           value = value + 1
           Flutter.rebuild();
         end,
-        child = UI.Text({
+        child = UI.TextWidget({
           value = "increase"
         }),
       })
