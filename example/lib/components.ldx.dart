@@ -6,7 +6,6 @@
 // **************************************************************************
 
 // ignore_for_file: sort_child_properties_last
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_ludyx/flutter_ludyx.dart';
 import 'package:ludyx_example/components/clickable.dart';

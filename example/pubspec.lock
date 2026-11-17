@@ -233,7 +233,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.5"
+    version: "0.0.6"
   flutter_ludyx_annotations:
     dependency: "direct main"
     description:
@@ -246,10 +246,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_ludyx_generator
-      sha256: bfb93440aa6c1df62f74627c61dfd6bb1fb4141f17f5e4e90ea08e9e21799778
+      sha256: "693318b0def22d7f3fee50ed2dcd9a00791ce95bb2e020167cb34ca5f4cc9d92"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1"
+    version: "0.0.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
