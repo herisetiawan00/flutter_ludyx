@@ -25,3 +25,7 @@
 
 * Support `flutter_ludyx_generator` and `flutter_ludyx_annotations`
 * Removed basic component
+
+## 0.0.7
+
+* Update `README.md`
